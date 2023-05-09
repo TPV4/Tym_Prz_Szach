@@ -3,6 +3,7 @@ import cv2 as cv
 import tkinter as tk
 from tkinter.ttk import *
 from PIL import Image, ImageTk
+import os
 import random
 import gra
 
@@ -58,7 +59,7 @@ class Program(Superprogram):
         graj = Button(self.menu, text = 'graj', command = lambda:self.Gra_opcje())
         graj.place(x=250, y=100)
         self.przyciski.append(graj)
-        wczytaj=Button(self.menu, text='wczytaj', command=lambda:self.wczytaj())
+        wczytaj=Button(self.menu, text='wczytaj', command=lambda:self.wczytaj_nazwa())
         wczytaj.place(x=250, y=300)
         self.przyciski.append(wczytaj)
         opcje = Button(self.menu, text = 'opcje', command = lambda:self.Opcje())
@@ -68,56 +69,78 @@ class Program(Superprogram):
         wyjdz.place(x=250, y=400)
         self.przyciski.append(wyjdz)
 
-    def wczytaj(self):
-        plik=open('partia.txt','r')
-        pozycja=[[0 for i in range(8)] for j in range(8)]
-        for i in range(9):
-            linia=plik.readline()
-            if i<8:
-                for j in range(8):
-                    pozycja[i][j]=ord(linia[j])-ord('a')
-            else:
-                if linia=="True":
-                    kolor=True
-                elif linia=="False":
-                    kolor=False
-        plik.close()
-        self.wczytane=tk.Toplevel()
-        self.wczytane.geometry("640x640")
-        self.wczytane.title("wczytana partia")
-        szachownica=np.zeros((640,640,3), dtype="uint8")
-        kol=True
-        for i in range(8):
-            for j in range(8):
-                if kol:
-                    szachownica=cv.rectangle(szachownica, (i*80,j*80), (i*80+80,j*80+80), self.tab[self.kol_tlo][1], -1)
-                    kol=False
-                else:
-                    szachownica=cv.rectangle(szachownica, (i*80,j*80), (i*80+80,j*80+80), self.tab[self.kol_tlo][0], -1)
-                    kol=True
-            if kol:
-                kol=False
-            else:
-                kol=True
+    def wczytaj_nazwa(self):
+        self.remove()
+        napis=Label(self.menu, text="wprowadz nazwe pliku (tylko rozszerzenia .txt)")
+        napis.place(x=150, y=100)
+        self.przyciski.append(napis)
+        wprow=Entry(self.menu)
+        wprow.place(x=250, y=200)
+        self.przyciski.append(wprow)
+        wczytaj=Button(self.menu, text='wczytaj', command=lambda:self.wczytaj(wprow.get()))
+        wczytaj.place(x=250, y=300)
+        self.przyciski.append(wczytaj)
+        powrot=Button(self.menu, text="powrot", command=lambda:(self.remove(), self.main()))
+        powrot.place(x=250, y=400)
+        self.przyciski.append(powrot)
 
-        obrazy1, obrazy2=self.figurowanie(szachownica)
-        a,b,c = cv.split(szachownica)
-        szachownica = cv.merge((c,b,a))
-        img = Image.fromarray(szachownica)
-        self.photo = ImageTk.PhotoImage(image=img) 
-        Label(self.wczytane, image=self.photo).place(x=0, y=0)
-
-        for i in range(8):
-            for j in range(8):
-                if (i+j)%2==0:
-                    obrazy=obrazy1
+    def wczytaj(self, nazwa):
+        if not os.path.isfile(nazwa):
+            pass
+        else:
+            plik=open(nazwa,'r')
+            pozycja=[[0 for i in range(8)] for j in range(8)]
+            for i in range(10):
+                linia=plik.readline()
+                if i<8:
+                    for j in range(8):
+                        pozycja[i][j]=ord(linia[j])-ord('a')
+                elif i==8:
+                    if linia=="True\n":
+                        kolor=True
+                    elif linia=="False":
+                        kolor=False
                 else:
-                    obrazy=obrazy2
-                if pozycja[i][j]!=0:
-                    if kolor:
-                        Label(self.wczytane, image=obrazy[pozycja[i][j]-1]).place(x=80*j+5, y=80*i+5)
-                    else:
-                        Label(self.wczytane, image=obrazy[pozycja[i][j]-1]).place(x=590-80*j, y=590-80*i)
+                    if linia=="False":
+                        plik.close()
+                        gra.Szachy(self.menu, kolor, self.kol_tlo, pozycja)
+                    elif linia=="True":  
+                        self.wczytane=tk.Toplevel()
+                        self.wczytane.geometry("640x640")
+                        self.wczytane.title("wczytana partia")
+                        szachownica=np.zeros((640,640,3), dtype="uint8")
+                        kol=True
+                        for i in range(8):
+                            for j in range(8):
+                                if kol:
+                                    szachownica=cv.rectangle(szachownica, (i*80,j*80), (i*80+80,j*80+80), self.tab[self.kol_tlo][1], -1)
+                                    kol=False
+                                else:
+                                    szachownica=cv.rectangle(szachownica, (i*80,j*80), (i*80+80,j*80+80), self.tab[self.kol_tlo][0], -1)
+                                    kol=True
+                            if kol:
+                                kol=False
+                            else:
+                                kol=True
+
+                        obrazy1, obrazy2=self.figurowanie(szachownica)
+                        a,b,c = cv.split(szachownica)
+                        szachownica = cv.merge((c,b,a))
+                        img = Image.fromarray(szachownica)
+                        self.photo = ImageTk.PhotoImage(image=img) 
+                        Label(self.wczytane, image=self.photo).place(x=0, y=0)
+
+                        for i in range(8):
+                            for j in range(8):
+                                if (i+j)%2==0:
+                                    obrazy=obrazy1
+                                else:
+                                    obrazy=obrazy2
+                                if pozycja[i][j]!=0:
+                                    if kolor:
+                                        Label(self.wczytane, image=obrazy[pozycja[i][j]-1]).place(x=80*j+5, y=80*i+5)
+                                    else:
+                                        Label(self.wczytane, image=obrazy[pozycja[i][j]-1]).place(x=590-80*j, y=590-80*i)
 
     def figurowanie(self, szachownica):
         #import grafik i skalowanie

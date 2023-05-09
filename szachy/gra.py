@@ -3,14 +3,19 @@ import cv2 as cv
 import tkinter as tk
 from tkinter.ttk import *
 from PIL import Image, ImageTk
+import os
 import random
 from functools import partial
 import skan as sk
 import menu as Menu
 
 class Szachy:
-    def __init__(self, root, kolor, kol_tlo):
+    def __init__(self, root, kolor, kol_tlo, pozycja=0):
         root.destroy()
+        if pozycja==0:
+            self.rozstawienie()
+        else:
+            self.pozycja=pozycja
         self.okno=tk.Tk()
         self.okno.geometry("800x700")
         self.okno.title("Gra z komputerem")
@@ -147,7 +152,11 @@ class Szachy:
         img = Image.fromarray(szachownica)
         self.photo = ImageTk.PhotoImage(image=img) 
         Label(self.okno, image=self.photo).place(x=25, y=25)
-        self.rozstawienie()
+        zapisz=Button(self.okno, text="zapisz", command=lambda:self.zapisz())
+        wyjscie=Button(self.okno, text="wyjdź", command=lambda:self.okno.destroy())
+        wyjscie.place(x=700, y=500)
+        zapisz.place(x=700, y=600)
+        self.koniec=False
 
         for i in range(8):
             for j in range(8):
@@ -516,14 +525,14 @@ class Szachy:
         napis=Label(self.okno, text="PAT")
         napis.place(x=700, y=300)
         powrot=Button(self.okno, text="powrót", command=lambda:Menu.Program(self.okno))
-        wyjscie=Button(self.okno, text="wyjdź", command=lambda:self.okno.destroy())
-        zapisz=Button(self.okno, text="zapisz", command=lambda:self.zapisz())
-        zapisz.place(x=700, y=600)
         powrot.place(x=700, y=400)
-        wyjscie.place(x=700, y=500)
+        self.koniec=True
     
     def zapisz(self):
-        plik=open("partia.txt", "w")
+        n=1
+        while os.path.isfile("partia{}.txt".format(n)):
+            n+=1
+        plik=open("partia{}.txt".format(n), "w")
         pozycja=''
         tab=['a','b','c','d','e','f','g','h','i','j','k','l','m']
         for i in range(8):
@@ -532,6 +541,10 @@ class Szachy:
                 pozycja+=fig
             pozycja+='\n'
         pozycja+=str(self.kolor)
+        if self.koniec:
+            pozycja+='\nTrue'
+        else:
+            pozycja+='\nFalse'
         plik.write(pozycja)
         plik.close()
 
@@ -556,8 +569,5 @@ class Szachy:
             napis=Label(self.okno, text="wygrana czarnych")
             napis.place(x=690, y=300)
         powrot=Button(self.okno, text="powrót", command=lambda:Menu.Program(self.okno))
-        wyjscie=Button(self.okno, text="wyjdź", command=lambda:self.okno.destroy())
-        zapisz=Button(self.okno, text="zapisz", command=lambda:self.zapisz())
-        zapisz.place(x=700, y=600)
         powrot.place(x=700, y=400)
-        wyjscie.place(x=700, y=500)
+        self.koniec=True
