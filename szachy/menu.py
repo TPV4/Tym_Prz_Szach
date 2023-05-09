@@ -6,10 +6,11 @@ from PIL import Image, ImageTk
 import os
 import random
 import gra
+import przeciazenie
 
 
-class Superprogram:
-    pass
+class Superprogram():
+    niepotrzebne=2
 
 class Program(Superprogram):
     def __init__(self, *root):
@@ -68,22 +69,73 @@ class Program(Superprogram):
         wyjdz = Button(self.menu, text = 'wyjdź', command = lambda:self.menu.destroy())
         wyjdz.place(x=250, y=400)
         self.przyciski.append(wyjdz)
+        przeciazenie=Button(self.menu, text = 'przeciazenie', command = lambda:self.przeciazenie())
+        przeciazenie.place(x=250, y=500)
+        self.przyciski.append(przeciazenie)
+
+    def przeciazenie(self):
+        self.remove()
+        napis=Label(self.menu, text="wprowadz nazwy plikow do porownania (tylko rozszerzenia .txt)")
+        napis.place(x=50, y=100)
+        self.przyciski.append(napis)
+        wprow1=Entry(self.menu)
+        wprow1.place(x=250, y=200)
+        self.przyciski.append(wprow1)
+        wprow2=Entry(self.menu)
+        wprow2.place(x=250, y=300)
+        self.przyciski.append(wprow2)
+        sprawdz=Button(self.menu, text="sprawdz", command=lambda:self.sprawdzenie(wprow1.get(), wprow2.get()))
+        sprawdz.place(x=250, y=400)
+        self.przyciski.append(sprawdz)
+
 
     def wczytaj_nazwa(self):
         self.remove()
         napis=Label(self.menu, text="wprowadz nazwe pliku (tylko rozszerzenia .txt)")
         napis.place(x=150, y=100)
         self.przyciski.append(napis)
-        wprow=Entry(self.menu)
-        wprow.place(x=250, y=200)
-        self.przyciski.append(wprow)
-        wczytaj=Button(self.menu, text='wczytaj', command=lambda:self.wczytaj(wprow.get()))
-        wczytaj.place(x=250, y=300)
-        self.przyciski.append(wczytaj)
+        wprow1=Entry(self.menu)
+        wprow1.place(x=250, y=200)
+        self.przyciski.append(wprow1)
+        wprow2=Entry(self.menu)
+        wprow2.place(x=250, y=200)
+        self.przyciski.append(wprow2)
+        sprawdz=Button(self.menu, text='sprawdz', command=lambda:self.sprawdzenie(wprow1.get(), wprow2.get()))
+        sprawdz.place(x=250, y=300)
+        self.przyciski.append(sprawdz)
         powrot=Button(self.menu, text="powrot", command=lambda:(self.remove(), self.main()))
         powrot.place(x=250, y=400)
         self.przyciski.append(powrot)
 
+    def sprawdzenie(self, nazwa1, nazwa2):
+        if (not os.path.isfile(nazwa1)) or (not os.path.isfile(nazwa2)):
+            pass
+        else:
+            plik1=open(nazwa1,'r')
+            pozycja1=[[0 for i in range(8)] for j in range(8)]
+            for i in range(8):
+                linia=plik1.readline()
+                if i<8:
+                    for j in range(8):
+                        pozycja1[i][j]=ord(linia[j])-ord('a')
+            plik2=open(nazwa2,'r')
+            pozycja2=[[0 for i in range(8)] for j in range(8)]
+            for i in range(8):
+                linia=plik2.readline()
+                if i<8:
+                    for j in range(8):
+                        pozycja2[i][j]=ord(linia[j])-ord('a')
+            A=przeciazenie.Partia(pozycja1)
+            B=przeciazenie.Partia(pozycja2)
+            if A==B:
+                wynik=Label(self.menu, text="pozycje sa takie same    ")
+                wynik.place(x=250, y=500)
+                self.przyciski.append(wynik)
+            else:
+                wynik=Label(self.menu, text="pozycje nie sa takie same")
+                wynik.place(x=250, y=500)
+                self.przyciski.append(wynik)
+            
     def wczytaj(self, nazwa):
         if not os.path.isfile(nazwa):
             pass
@@ -305,3 +357,4 @@ class Program(Superprogram):
         self.t=Label(self.menu, image=self.img)
         self.t.pack(expand=True, fill="both")
         self.Opcje()
+
