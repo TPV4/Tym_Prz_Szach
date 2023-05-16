@@ -8,4 +8,13 @@ class Partia:
                 if self.pozycja[i][j]!=poprzednia.pozycja[i][j]:
                     return False
         return True
-        
+    
+class Error(Exception):
+
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.litera=args[0]
+
+    def __str__(self) -> str:
+        return f'w pliku wystepuje niepoprawny znak {self.litera}'
+    

@@ -1,0 +1,10 @@
+lkjihjkl
+mmmmmmam
+aaaaaama
+aaaaaaaa
+aaabaaaa
+aaaaaaaa
+bbbabbbb
+cdefgedc
+True
+False

@@ -97,17 +97,22 @@ class Program(Superprogram):
         wprow1=Entry(self.menu)
         wprow1.place(x=250, y=200)
         self.przyciski.append(wprow1)
-        wprow2=Entry(self.menu)
-        wprow2.place(x=250, y=200)
-        self.przyciski.append(wprow2)
-        sprawdz=Button(self.menu, text='sprawdz', command=lambda:self.sprawdzenie(wprow1.get(), wprow2.get()))
+        sprawdz=Button(self.menu, text='graj', command=lambda:self.wczytaj(wprow1.get()))
         sprawdz.place(x=250, y=300)
         self.przyciski.append(sprawdz)
         powrot=Button(self.menu, text="powrot", command=lambda:(self.remove(), self.main()))
         powrot.place(x=250, y=400)
         self.przyciski.append(powrot)
 
+    def litera_na_numer(self, litera):
+        if ord(litera)<ord('a') or ord(litera)>ord('m'):
+            raise przeciazenie.Error(litera)
+        
+        numer=ord(litera)-ord('a')
+        return numer
+
     def sprawdzenie(self, nazwa1, nazwa2):
+        
         if (not os.path.isfile(nazwa1)) or (not os.path.isfile(nazwa2)):
             pass
         else:
@@ -117,18 +122,24 @@ class Program(Superprogram):
                 linia=plik1.readline()
                 if i<8:
                     for j in range(8):
-                        pozycja1[i][j]=ord(linia[j])-ord('a')
+                        try:
+                            pozycja1[i][j]=self.litera_na_numer(linia[j])
+                        except przeciazenie.Error as blad:
+                            print(blad)
             plik2=open(nazwa2,'r')
             pozycja2=[[0 for i in range(8)] for j in range(8)]
             for i in range(8):
                 linia=plik2.readline()
                 if i<8:
                     for j in range(8):
-                        pozycja2[i][j]=ord(linia[j])-ord('a')
+                        try:
+                            pozycja1[i][j]=self.litera_na_numer(linia[j])
+                        except przeciazenie.Error as blad:
+                            print(blad)
             A=przeciazenie.Partia(pozycja1)
             B=przeciazenie.Partia(pozycja2)
             if A==B:
-                wynik=Label(self.menu, text="pozycje sa takie same    ")
+                wynik=Label(self.menu, text="pozycje sa takie same      ")
                 wynik.place(x=250, y=500)
                 self.przyciski.append(wynik)
             else:
@@ -137,9 +148,7 @@ class Program(Superprogram):
                 self.przyciski.append(wynik)
             
     def wczytaj(self, nazwa):
-        if not os.path.isfile(nazwa):
-            pass
-        else:
+        try:
             plik=open(nazwa,'r')
             pozycja=[[0 for i in range(8)] for j in range(8)]
             for i in range(10):
@@ -193,6 +202,8 @@ class Program(Superprogram):
                                         Label(self.wczytane, image=obrazy[pozycja[i][j]-1]).place(x=80*j+5, y=80*i+5)
                                     else:
                                         Label(self.wczytane, image=obrazy[pozycja[i][j]-1]).place(x=590-80*j, y=590-80*i)
+        except:
+            pass
 
     def figurowanie(self, szachownica):
         #import grafik i skalowanie
