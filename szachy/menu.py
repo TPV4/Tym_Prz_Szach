@@ -9,10 +9,8 @@ import gra
 import przeciazenie
 
 
-class Superprogram():
-    niepotrzebne=2
 
-class Program(Superprogram):
+class Program:
     def __init__(self, *root):
         if len(root)!=0:
             root[0].destroy()

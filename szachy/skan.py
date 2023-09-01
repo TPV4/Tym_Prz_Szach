@@ -1,5 +1,5 @@
 
-def skanowanie(pozycja, figura, Y, X, bicie_w_przelocie, test):
+def skanowanie(pozycja:list, figura:int, Y:int, X:int, bicie_w_przelocie:list, test:bool):
         #skanuje jakie mozliwosci ruchu ma dana figura
         switch={
             1:pionek_skan,
@@ -28,7 +28,7 @@ def skanowanie(pozycja, figura, Y, X, bicie_w_przelocie, test):
                 M1=switch[figura](pozycja, bicie_w_przelocie, Y, X, True, test)
             return M1
 
-def pionek_skan(pozycja, bicie_w_przelocie, Y, X, kol, test):
+def pionek_skan(pozycja, bicie_w_przelocie, Y, X, kol:bool, test):
         mozliwosci=[]
         if not test:
             bicie_w_przelocieb=bicie_w_przelocie[0]
@@ -369,7 +369,7 @@ def krol_skan(pozycja, ignoruj, Y, X, kol, test):
         else:
             return mozliwosci
 
-def zaslona(figura, poz, X, Y, kol, moz, ignoruj):
+def zaslona(figura:int, poz, X, Y, kol, moz:list, ignoruj:bool)->list:
     czarne=[]
     biale=[]
     for i in range(8):

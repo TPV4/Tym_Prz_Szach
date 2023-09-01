@@ -494,9 +494,9 @@ class Szachy:
                     for a in range(len(mozliwosci_przec)):
                         if mozliwosci_przec[a][0]==krol[0] and mozliwosci_przec[a][1]==krol[1]:
                             self.mat()
-                            return
+                            return None
                 self.pat()
-                return
+                return None
             else:
                 n=random.randrange(len(fig))
                 mozliwosci=sk.skanowanie(self.pozycja, fig[n][0], fig[n][1], fig[n][2], (self.bicie_w_przelocieb, self.bicie_w_przelociec), False)
